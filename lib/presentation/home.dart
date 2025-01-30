@@ -1,23 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class MyDetailsPage extends StatefulWidget {
+  final String name;
+  final String address;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  const MyDetailsPage({super.key, required String this.name, required String this.address});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyDetailsPage> createState() => _MyDetailsPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyDetailsPageState extends State<MyDetailsPage> {
   bool isPressed=false;
 
   void _toggleFavorite() {
@@ -28,21 +22,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(AppLocalizations.of(context)!.helloWorld),
+        title: Text(widget.name),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -55,55 +38,44 @@ class _MyHomePageState extends State<MyHomePage> {
                 image: NetworkImage(
                     'https://www.petitfute.com/medias/professionnel/2098176/premium/originale/6645d3290f000.png'),
               ),
-              // Ajout de Padding pour le Row
               Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
-                // Padding gauche et droite
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Colonne pour le texte à gauche
                     Column(
                       crossAxisAlignment:
-                          CrossAxisAlignment.start, // Aligner le texte à gauche
-                      children: const [
+                          CrossAxisAlignment.start, 
+                      children:  [
                         Text(
-                          'Désordre',
+                          widget.name,
                           style: TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                           overflow: TextOverflow.fade,
                           maxLines: 3,
                         ),
                         Text(
-                          '18 rue Georges Charpak',
-                          style: TextStyle(fontSize: 16),
-                          overflow: TextOverflow.fade,
-                          maxLines: 3,
-                        ),
-                        Text(
-                          '35700 Rennes',
+                          widget.address,
                           style: TextStyle(fontSize: 16),
                           overflow: TextOverflow.fade,
                           maxLines: 3,
                         ),
                       ],
                     ),
-                    // Ajout d'un espace flexible pour pousser l'icône et le texte à droite
                     Spacer(),
-                    // Icône et texte "185" à droite
                     Row(
                       children: [
                         IconButton(
                           icon: Icon(Icons.favorite),
                           color: isPressed
                               ? Colors.pink
-                              : Colors.grey, // Changement de couleur
+                              : Colors.grey, 
                           iconSize: 45,
                           onPressed: _toggleFavorite,
                         ),
                         SizedBox(
-                            width: 4), // Espacement entre l'icône et le texte
+                            width: 4), 
                         Text(
                           '185',
                           style: TextStyle(fontSize: 16),
@@ -120,25 +92,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     const EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
                 child: Row(
                   children: [
-                    // Icône à gauche
                     Icon(
                       Icons.add_call,
                       color: const Color.fromARGB(255, 12, 15, 221),
                       size: 45,
                       semanticLabel: 'Text to announce in accessibility modes',
                     ),
-                    // Espace flexible entre les icônes
                     Spacer(),
-                    // Icône au milieu
                     Icon(
                       Icons.arrow_back,
                       color: const Color.fromARGB(255, 12, 15, 221),
                       size: 45,
                       semanticLabel: 'Text to announce in accessibility modes',
                     ),
-                    // Espace flexible entre les icônes
                     Spacer(),
-                    // Icône à droite
                     Icon(
                       Icons.share_outlined,
                       color: const Color.fromARGB(255, 12, 15, 221),
@@ -154,10 +121,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Row(
                   children: [
                     Expanded(
-                      // Permet au contenu de s’étirer correctement
                       child: Column(
                         crossAxisAlignment:
-                            CrossAxisAlignment.start, // Alignement à gauche
+                            CrossAxisAlignment.start, 
                         children: [
                           Text(
                             AppLocalizations.of(context)!.descr,
@@ -174,7 +140,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

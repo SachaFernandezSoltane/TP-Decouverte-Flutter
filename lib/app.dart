@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tp1/presentation/home.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tp1/presentation/list_bar.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -13,15 +14,9 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/',
           builder: (BuildContext context, GoRouterState state) {
-            return MyHomePage();
+            return MyListPage();
           },
           routes: <RouteBase>[
-        GoRoute(
-          path: 'details',
-          builder: (BuildContext context, GoRouterState state) {
-            return const MyHomePage();
-          },
-        ),
       ],
         ),
       ],
