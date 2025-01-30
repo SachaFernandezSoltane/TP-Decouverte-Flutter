@@ -1,0 +1,7 @@
+{
+  "helloWorld": "Hello World!",
+  "descr": "If it's a bet on the future, we believe in the development of the neighborhood, assure the two partners of the new bar-restaurant Désordre: Donovan Briand, who has worked in different bars in the city, and Cécilia Le Perchec, ex-bistro Cocagne. At lunchtime, the brand offers classic dining with an Italian-Breton touch, made from fresh and mostly local products.",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting"
+  }
+}
