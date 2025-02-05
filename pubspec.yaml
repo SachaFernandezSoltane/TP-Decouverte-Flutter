@@ -39,6 +39,9 @@ dependencies:
   intl: any
   intl_translation: any
   go_router: ^14.7.2
+  bloc: ^9.0.0
+  equatable: ^2.0.0
+  flutter_bloc: ^9.0.0
 
 dev_dependencies:
   flutter_test:
