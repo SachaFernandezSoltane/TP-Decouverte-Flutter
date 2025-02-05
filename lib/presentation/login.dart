@@ -5,14 +5,58 @@ import 'package:tp1/bloc/auth_event.dart';
 import 'package:tp1/bloc/auth_state.dart';
 import 'package:tp1/presentation/list_bar.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class MyLoginPage extends StatefulWidget {
+  const MyLoginPage({super.key});
+
+  @override
+  State<MyLoginPage> createState() => _MyLoginPageState();
+}
+
+class _MyLoginPageState extends State<MyLoginPage> {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  late AnimationController controller;
+
+  bool isLoading = false;
+
+  void _handleLogin(BuildContext context) {
+    final username = usernameController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (username.isEmpty || password.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Erreur'),
+          content: const Text('Les champs ne peuvent pas être vides.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+
+      BlocProvider.of<AuthBloc>(context).add(
+        AuthLoginRequested(username: username, password: password),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController usernameController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-
     return BlocProvider(
       create: (context) => AuthBloc(),
       child: Scaffold(
@@ -30,134 +74,54 @@ class LoginPage extends StatelessWidget {
               children: <Widget>[
                 TextField(
                   controller: usernameController,
-                  decoration: const InputDecoration(
-                    hintText: 'Username',
-                  ),
+                  decoration: const InputDecoration(hintText: 'Username'),
                 ),
                 const SizedBox(height: 20),
                 TextField(
                   controller: passwordController,
-                  decoration: const InputDecoration(
-                    hintText: 'Password',
-                  ),
+                  decoration: const InputDecoration(hintText: 'Password'),
                   obscureText: true,
                 ),
                 const SizedBox(height: 20),
-
-                // BlocListener pour gérer les changements d'état
                 BlocListener<AuthBloc, AuthState>(
                   listener: (context, state) {
-                    if (state is AuthLoading) {
-                      // Afficher un indicateur de chargement
-                      showDialog(
-                        context: context,
-                        builder: (context) => const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                    if (state is AuthAuthenticated) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const MyListPage()),
                       );
-                    } else if (state is AuthFailure) {
-                      // Afficher un message d'erreur
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Erreur'),
-                          content: Text(state.message),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else if (state is AuthAuthenticated) {
-                      // Attendre 2 secondes avant de naviguer vers MyListPage
-                      Future.delayed(const Duration(seconds: 2), () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => MyListPage()),
-                        );
-                      });
                     }
                   },
-                  child: BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, state) {
-                      if (state is AuthFailure) {
-                        // Afficher l'erreur sous forme de texte dans la vue
-                        return Column(
-                          children: [
-                            Text(state.message, style: TextStyle(color: Colors.red)),
-                            ElevatedButton(
-                              onPressed: () {
-                                final username = usernameController.text.trim();
-                                final password = passwordController.text.trim();
-
-                                if (username.isEmpty || password.isEmpty) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: const Text('Erreur'),
-                                      content: const Text('Les champs ne peuvent pas être vides.'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('OK'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                } else {
-                                  BlocProvider.of<AuthBloc>(context).add(
-                                    AuthLoginRequested(username: username, password: password),
-                                  );
-                                }
-                              },
-                              child: const Text('Login'),
-                            ),
-                          ],
-                        );
-                      } else {
-                        // Afficher le bouton Login quand l'état n'est ni loading, ni failure
-                        return ElevatedButton(
-                          onPressed: () {
-                            final username = usernameController.text.trim();
-                            final password = passwordController.text.trim();
-
-                            if (username.isEmpty || password.isEmpty) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Erreur'),
-                                  content: const Text('Les champs ne peuvent pas être vides.'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              BlocProvider.of<AuthBloc>(context).add(
-                                AuthLoginRequested(username: username, password: password),
-                              );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: const Color.fromARGB(255, 13, 82, 139),
+                  child: const SizedBox.shrink(),
+                ),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    String? errorMessage;
+                    if (state is AuthFailure) {
+                      errorMessage = state.message;
+                    }
+                    
+                    return Column(
+                      children: [
+                        if (errorMessage != null)
+                          Text(
+                            errorMessage,
+                            style: const TextStyle(color: Colors.red),
                           ),
-                          child: const Text('Login'),
-                        );
-                      }
-                    },
-                  ),
+                        isLoading
+                            ? CircularProgressIndicator()
+                            : ElevatedButton(
+                                onPressed: () => _handleLogin(context),
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 13, 82, 139),
+                                ),
+                                child: const Text('Login'),
+                              ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
