@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tp1/bloc/auth_bloc.dart';
 import 'package:tp1/bloc/auth_event.dart';
 import 'package:tp1/bloc/auth_state.dart';
+import 'package:tp1/presentation/list_bar.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -43,10 +44,19 @@ class LoginPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // Utilisation de BlocListener pour écouter les changements d'état
+                // BlocListener pour gérer les changements d'état
                 BlocListener<AuthBloc, AuthState>(
                   listener: (context, state) {
-                    if (state is AuthFailure) {
+                    if (state is AuthLoading) {
+                      // Afficher un indicateur de chargement
+                      showDialog(
+                        context: context,
+                        builder: (context) => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else if (state is AuthFailure) {
+                      // Afficher un message d'erreur
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
@@ -62,15 +72,56 @@ class LoginPage extends StatelessWidget {
                           ],
                         ),
                       );
+                    } else if (state is AuthAuthenticated) {
+                      // Attendre 2 secondes avant de naviguer vers MyListPage
+                      Future.delayed(const Duration(seconds: 2), () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyListPage()),
+                        );
+                      });
                     }
                   },
                   child: BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
-                      if (state is AuthLoading) {
-                        return const CircularProgressIndicator();
-                      } else if (state is AuthAuthenticated) {
-                        return Center(child: Text('Bienvenue ${state.username}'));
+                      if (state is AuthFailure) {
+                        // Afficher l'erreur sous forme de texte dans la vue
+                        return Column(
+                          children: [
+                            Text(state.message, style: TextStyle(color: Colors.red)),
+                            ElevatedButton(
+                              onPressed: () {
+                                final username = usernameController.text.trim();
+                                final password = passwordController.text.trim();
+
+                                if (username.isEmpty || password.isEmpty) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Erreur'),
+                                      content: const Text('Les champs ne peuvent pas être vides.'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  BlocProvider.of<AuthBloc>(context).add(
+                                    AuthLoginRequested(username: username, password: password),
+                                  );
+                                }
+                              },
+                              child: const Text('Login'),
+                            ),
+                          ],
+                        );
                       } else {
+                        // Afficher le bouton Login quand l'état n'est ni loading, ni failure
                         return ElevatedButton(
                           onPressed: () {
                             final username = usernameController.text.trim();
