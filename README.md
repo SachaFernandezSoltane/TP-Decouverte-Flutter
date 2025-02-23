@@ -1,16 +1,7 @@
-# tp1
+## Copyright  
 
-A new Flutter project.
+© 2025 Sacha Fernandez Soltane. Tous droits réservés.
 
-## Getting Started
+Ce projet est uniquement destiné à des fins éducatives et personnelles. Il est strictement interdit de copier ou de réutiliser ce code dans le cadre de travaux académiques ou de projets dans le cadre du programme MIAGE ou d'autres formations similaires sans autorisation préalable. Toute violation pourra entraîner des sanctions.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Sacha Fernandez-Soltane n'est pas responsable en cas de triche commis par un autre étudiant de MIAGE.
